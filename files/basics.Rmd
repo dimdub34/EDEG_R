@@ -1,0 +1,290 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(questionr)
+library(tidyverse)
+```
+
+# Practice 1 : Vectors and sequences
+
+## Vector creation and operation
+Create the following vector 120 134 256  12
+```{r}
+(first_vector <- c(120, 134, 256, 12))
+```
+
+Use this vector to generate the two following vectors  
+220 234 356 112
+```{r}
+first_vector + 100
+```
+
+240 268 512  24
+```{r}
+first_vector * 2
+```
+## Incomes
+with the following vectors
+```{r}
+husband_income <- c(1200, 1180, 1750, 2100)
+wife_income <- c(1450, 1870, 1690, 0)
+household_people <- c(4, 2, 3, 2)
+```
+
+Absolute difference of income between the husband and the wife in each household (function abs)
+```{r}
+abs(husband_income - wife_income)
+```
+calculate the total income of the households
+```{r}
+(total_income <- husband_income + wife_income)
+```
+calculate the income per person in each household
+```{r}
+total_income / household_people
+```
+## Sequences
+create a sequence from 1 to 10
+```{r}
+1:10
+```
+
+create a sequence from 0 to 100 by step of 5
+```{r}
+(first_seq <- seq(0, 100, 5))
+```
+
+repeat the sequence of 4. twice
+```{r}
+rep(first_seq, 2)
+```
+
+# Pratice 2 : Categorical variables
+
+```{r}
+education_levels <- c("Bachelor", "Master", "Ph.D")
+(education <- sample(education_levels, 10, replace = TRUE))
+```
+what is the type of the vector
+```{r}
+typeof(education)
+```
+
+change the vector as a categorical variable
+```{r}
+(education <- factor(education))
+```
+display the levels and the associated integers
+```{r}
+levels(education)
+```
+
+```{r}
+str(education)
+```
+change the level “Ph.D” to “PhD”
+```{r}
+levels(education)[3] <- "PhD"
+levels(education)
+```
+
+# Data Frame
+```{r}
+set.seed(123) # for reproducibility
+gender <- sample(c("male", "female"), 100, replace = TRUE)
+age <- sample(18:65, 100, replace = TRUE)
+education <- sample(c("college", "bachelor", "master", "PhD"), 100, replace = TRUE)
+income <- round(rnorm(100, 50000, 10000))
+children <- sample(0:4, 100, replace = TRUE)
+
+(df <- data.frame(gender, age, education, income, children))
+```
+
+Select the age and income variables for the first 10 observations using the brackets and the $ operator
+```{r}
+df$age[1:10]
+```
+
+```{r}
+df[1:10, c("age", "income")]
+```
+Select observations where the income is greater than 60,000 using the brackets and the $ operator
+```{r}
+df[df$income>60000,]
+```
+
+Select observations where the education level is either “college” or “master” using subset() and %in%
+```{r}
+df[df$education %in% c("college", "master"),]
+```
+
+```{r}
+subset(df, education %in% c("college", "master"))
+```
+
+Select observations where the income is greater than 60 000 and the age is greater than 40 and display variables gender, age, income, using subset.
+```{r}
+subset(df, income > 60000 & age > 40)[c("gender", "age", "income")]
+```
+
+# Manipulation of functions
+```{r}
+temperature <- c(3.4, 4.8, 8.4, 11.4, 15.8, 19.4, 22.2, 21.6, 17.6, 13.4, 7.6, 4.4)
+precipitations <- c(47.2, 44.1, 50.4, 74.9, 90.8, 75.6, 63.7, 62, 87.5, 98.6, 81.9, 55.2)
+```
+
+compute the average temperature
+```{r}
+mean(temperature)
+```
+compute the total rainfall
+```{r}
+sum(precipitations)
+```
+```{r}
+python <- c(12, 16, 8, 18, 6, 10)
+html <- c(14, 9, 13, 15, 17, 11)
+bdd <- c(18, 11, 14, 10, 8, 12)
+(notes <- cbind(python, html, bdd))
+```
+compute the average of each student
+```{r}
+rowMeans(notes)
+```
+compute the average in each discipline
+```{r}
+colMeans(notes)
+```
+display the quartiles of the python discipline
+```{r}
+quantile(notes[,1])
+```
+```{r}
+class(notes)
+```
+```{r}
+notes <- as.data.frame(notes)
+class(notes)
+```
+
+
+```{r}
+notes$python
+```
+# Data Frame function with HDV2003
+```{r}
+data("hdv2003")
+```
+
+```{r}
+unique(hdv2003$sexe)
+```
+what is the mean of the variable age ?
+```{r}
+mean(df$age)
+```
+how many retired individuals are there ? (variable occup)
+```{r}
+nrow(hdv2003[hdv2003$occup == "Retraite", ])
+```
+how many retired women are there ? (variable occup and sexe)
+```{r}
+nrow(subset(hdv2003, occup == "Retraite" & sexe == "Femme"))
+```
+```{r}
+nrow(hdv2003[hdv2003$occup == "Retraite" & hdv2003$sexe == "Femme", ])
+```
+what is the average age of retired women ?
+```{r}
+mean(subset(hdv2003, occup == "Retraite" & sexe == "Femme")$age)
+```
+```{r}
+mean(hdv2003[hdv2003$occup == "Retraite" & hdv2003$sexe == "Femme", "age"])
+```
+
+# Categorical variables with forcats
+with the hdv2003 dataset, recode the variable relig in order to get
+```{r}
+freq(hdv2003$relig)
+```
+
+```{r}
+hdv2003$relig <- fct_collapse(hdv2003$relig, "Pratiquant"=c("Pratiquant regulier", "Pratiquant occasionnel"))
+hdv2003$relig <- fct_recode(hdv2003$relig, "Appartenance"="Appartenance sans pratique", "NSP"="NSP ou NVPR")
+freq(hdv2003$relig)
+```
+recode the variable nivetud to get
+```{r}
+freq(hdv2003$nivetud)
+```
+```{r}
+hdv2003$nivetud <- fct_collapse(hdv2003$nivetud, 
+                                "Etudes primaires"=c("A arrete ses etudes, avant la derniere annee d'etudes primaires", "Derniere annee d'etudes primaires"), "Enseignement technique ou professionel"=c("Enseignement technique ou professionnel court", "Enseignement technique ou professionnel long"))
+hdv2003$nivetud <- fct_recode(hdv2003$nivetud, "Enseignement supérieur"="Enseignement superieur y compris technique superieur")
+freq(hdv2003$nivetud)
+
+```
+
+reorder the factors of this variable to get
+```{r}
+hdv2003$nivetud <- fct_relevel(hdv2003$nivetud, 
+                               "Enseignement supérieur", "Enseignement technique ou professionel", "2eme cycle", "1er cycle", "Etudes primaires", "N'a jamais fait d'etudes", NA)
+freq(hdv2003$nivetud)
+```
+
+sort the factors of the variable relig according to the median of the variable age
+```{r}
+hdv2003$relig <- fct_reorder(hdv2003$relig, hdv2003$age, median)
+freq(hdv2003$relig)
+```
+
+# if_else, case_when and cut
+with if_else, create the variable cinema_bd which groups individuals who go to cinema and read bd. Others are put in the category “Other”. The result should be similar to
+```{r}
+unique(hdv2003$cinema)
+```
+```{r}
+unique(hdv2003$lecture.bd)
+```
+```{r}
+hdv2003$cinema_bd <- if_else(hdv2003$cinema == "Oui" & hdv2003$lecture.bd == "Oui", "Cinema and BD", "Other")
+freq(hdv2003$cinema_bd)
+```
+```{r}
+colnames(hdv2003)
+```
+```{r}
+unique(hdv2003$trav.satisf)
+```
+
+with case_when create the variable gender_bs with the following categories : Man with more than 2 brothers and sisters, Woman with more than 2 brothers and sisters, Other. The expected result is
+```{r}
+hdv2003$gender_bs <- case_when(
+  hdv2003$sexe == "Homme" & hdv2003$freres.soeurs > 2 ~ "Man with more than 2 brothers and sisters",
+  hdv2003$sexe == "Femme" & hdv2003$freres.soeurs > 2 ~ "Woman with more than 2 brothers and sisters",
+  TRUE ~ "Other"
+)
+freq(hdv2003$gender_bs)
+```
+
+with case_when, create a variable with the categories : Man over 30 yo, Man over 40 yo satisfied in his work, Woman practicing sport or DIY (bricolage), Other. The expected result is
+```{r}
+hdv2003$new_cat <- case_when(
+  hdv2003$sexe == "Homme"  & hdv2003$age > 40 & hdv2003$trav.satisf == "Satisfaction" ~ "Homme de plus de 40 ans satisfait par son travail",
+  hdv2003$sexe == "Homme"  & hdv2003$age > 30 ~ "Homme de plus de 30 ans",
+  hdv2003$sexe == "Femme" & (hdv2003$sport == "Oui" | hdv2003$bricol == "Oui") ~ "Femme pratiquant le sport ou le bricolage",
+  TRUE ~ "Other"
+)
+freq(hdv2003$new_cat)
+```
+
+cut the variable heures.tv to get the following frequency table
+```{r}
+freq(cut(hdv2003$heures.tv, breaks=c(0, 1, 2, 4, 6, 12), include.lowest = T))
+```
+
