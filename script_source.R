@@ -1,11 +1,15 @@
 library(tidyverse)
 library(questionr)
 library(nycflights23)
+
+# Dimensionality reduction
 library(FactoMineR)
 library(factoextra)
-library(nnet)
-library(plm)
-library(lme4)
+
+# regression
+library(nnet)  # for multinomimal regression
+library(plm)  # for panel data regression
+library(lme4)  # for mixed effect regression
 
 data("hdv2003")
 data("rp2012")

@@ -4,6 +4,7 @@ author: "D. Dubois"
 output: 
   revealjs::revealjs_presentation:
     css: custom.css
+    mathjax: "default"
     reveal_options:
       slideNumber: true
 ---
@@ -24,6 +25,7 @@ source("script_source.R", local=knitr::knit_global())
 - [Descriptive Statistics](#descriptive_statistics)
 - [Data Visualization](#visualisations)
 - [Multivariate Analysis](#multivariate_analysis)
+- [Dimensionality Reduction and Cluster Analysis](#dim_reduction_cluster)
 - [Sources](#sources)
 
 
@@ -1406,6 +1408,7 @@ freq(hdv2003$qualif, valid=F, total=T, sort="dec")
 1. analyse the variable `heures.tv`
 2. analyse the variable `trav.imp`
 
+
 ## Bivariate analysis
 
 - to analyse the relationship between two variables
@@ -1426,8 +1429,8 @@ a contingency table with the `table` function, with two vectors
 
 ---
 
--   the `prop.table` function computes the percentages
--   use the `margin` argument to indicate the axis (row=1, column=2) by which the percentages must be computed
+- the `prop.table` function computes the percentages
+- use the `margin` argument to indicate the axis (row=1, column=2) by which the percentages must be computed
 
 ```{r}
 prop.table(tb_prof_genre, margin=1) * 100
@@ -1478,12 +1481,6 @@ chisq.test(tb_prof_genre)
 
 ---
 
-💻 **Practice**
-
-Aanalyse the relation between work importance (trav.imp) and gender.
-
----
-
 ### One qualitative and one quantitative variable
 
 Is the distribution of the numerical (quantitative) variable significantly different across the various levels of the categorical (qualitative) variable?
@@ -1531,25 +1528,6 @@ In both cases the p-value is lower than 5% which means that the age of athletes 
 
 ---
 
-💻 **Practice**
-
-Copy/paste the code below and analyse the relation between the variable `age` and the variable `smoker`
-
-```{r}
-set.seed(123)  # for reproducbility of random numbers
-n <- 100
-
-# Create a data frame with two variables: age and smoker
-df <- data.frame(
-  age <- rnorm(n, mean = 35, sd = 10),
-  smoker <- sample(c("Yes", "No"), n, replace = TRUE, prob = c(0.25, 0.75))
-)
-df <- df |>
-  mutate(smoker = ifelse(age < 40, "Yes", smoker))
-```
-
----
-
 ### Two quantitative variables
 
 Load a new dataset, provided by *`questionr`*
@@ -1574,6 +1552,8 @@ The coefficient varies between -1 and +1, it measures the strength and the direc
 cor(rp2018$cadres, rp2018$dipl_sup)
 ```
 
+---
+
 The statistical test can be called with the `cor.test()` function
 
 $H_0$ : the coefficient is equal to 0
@@ -1590,7 +1570,12 @@ we reject $H_0$, the correlation between the two variables is significantly diff
 
 💻 **Pratice**
 
-Analyse the relationship between dipl_aucun and proprio
+With the dataset *rp2018*
+
+1. Analyse the relation between region and pop_chom : 
+  - calculate the average number of unemployed people by departement 
+  - test if the average number of unemployed people is different between the regions
+2. Analyse the relationship between pop_tot and pop_chom
 
 
 # Data Visualization {#visualisations}
@@ -1879,7 +1864,7 @@ ggplot(rp) +
 
 `scale_x_discrete`, `scale_y_discrete` for qualitative variables
 
-```{r}
+```{r, fig.height=4}
 ggplot(rp) +
   geom_bar(aes(x=departement)) + 
   scale_x_discrete("Departement") +
@@ -1892,7 +1877,7 @@ ggplot(rp) +
 
 With labs
 
-```{r}
+```{r, fig.height=4}
 ggplot(rp) +
   geom_point(aes(x=dipl_sup, y=cadres, color=pop_tot)) + 
   labs(color="Population")
@@ -1936,250 +1921,339 @@ lm_mod <- lm(y ~ x1 + x2)
 summary(lm_mod)
 ```
 
-<!-- --- -->
+---
 
-<!-- ### Logistic regression -->
+## Logistic regression
 
-<!-- - Logistic regression is a statistical model used for for modelling the relationship between a binary dependent variable and one or more independent variables -->
-<!-- - "logistic" because it uses the logistic function to model a binary dependent variable -->
-<!-- - the output of logistic regression is a probability that the given input point belongs to a certain class -->
-<!-- - performed using the **`glm()`** function, which stands for "generalized linear model"  -->
-<!-- - syntax is glm(formula, data, family), where family specifies the error distribution and link function to use. For logistic regression, we use family = binomial -->
+- Logistic regression is a statistical model used for modelling the relationship between a binary dependent variable and one or more independent variables
+- "logistic" because it uses the logistic function to model a binary dependent variable
+- the output of logistic regression is a probability that the given input point belongs to a certain class
+- performed using the **`glm()`** function, which stands for "generalized linear model"
+- syntax is `glm(formula, data, family)`, where family specifies the error distribution and link function to use. For logistic regression, we use family = binomial
 
-<!-- --- -->
+---
 
-<!-- ```{r} -->
-<!-- x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) -->
-<!-- y <- c(0, 0, 0, 0, 1, 0, 1, 1, 1, 1) -->
-<!-- glm_mod <- glm(y ~ x, family=binomial) -->
-<!-- summary(glm_mod) -->
-<!-- ``` -->
+```{r}
+x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+y <- c(0, 0, 0, 0, 1, 0, 1, 1, 1, 1)
+glm_mod <- glm(y ~ x, family=binomial)
+summary(glm_mod)
+```
 
-<!-- <div class="supplementary"> -->
-<!-- The coefficients are odds ratios: for a one unit increase in the independent variable, the odds of the outcome occurring are $e^\beta$ times larger, where $\beta$ is the coefficient for the independent variable. If $β = 1.3$, then $e^\beta = 3.675$. This means that for each additional unit of $x$, the odds of $y=1$ are 3.67 times higher.   -->
+<div class="supplementary">
+ℹ️ The coefficients are odds ratios: for a one unit increase in the independent variable, the odds of the outcome occurring are $e^\beta$ times larger, where $\beta$ is the coefficient for the independent variable. If $β = 1.3$, then $e^\beta = 3.675$. This means that for each additional unit of $x$, the odds of $y=1$ are 3.67 times higher.
 
-<!-- To convert odds to a probability : Probability = Odds / (1 + Odds).   -->
-<!-- With odds of 3.67, the probability would be 3.67 / (1 + 3.67) = 0.786 or 78.6%. So, for each additional unit of $x$, the probability of $y=1$ increases by 78.6%, ceteris paribus. -->
-<!-- </div> -->
+To convert odds to a probability : Probability = Odds / (1 + Odds).
+With odds of 3.67, the probability would be 3.67 / (1 + 3.67) = 0.786 or 78.6%. So, for each additional unit of $x$, the probability of $y=1$ increases by 78.6%, ceteris paribus.
+</div>
 
-<!-- --- -->
+---
 
-<!-- ### Multinomial logistic regression -->
+## Multinomial logistic regression
 
-<!-- - Multinomial logistic regression is a technique used for modelling the relationship between a categorical dependent variable with more than two levels and one or more independent variables -->
-<!-- - estimates $k-1$ models, where $k$ is the number of levels of the dependent variable -->
-<!-- - each of these models compares one of the $k-1$ categories to a reference category -->
-<!-- - performed using the **`multinom()`** function from the nnet package -->
-<!-- - multinom(formula, data) -->
+- Multinomial logistic regression is a technique used for modelling the relationship between a categorical dependent variable with more than two levels and one or more independent variables
+- estimates $k-1$ models, where $k$ is the number of levels of the dependent variable
+- each of these models compares one of the $k-1$ categories to a reference category
+- performed using the **`multinom()`** function from the nnet package
+- multinom(formula, data)
 
-<!-- The coefficients in the output can be interpreted similarly to binary logistic regression, but each coefficient now corresponds to the log of the odds of the outcome being in the corresponding category versus the reference category. -->
+The coefficients in the output can be interpreted similarly to binary logistic regression, but each coefficient now corresponds to the log of the odds of the outcome being in the corresponding category versus the reference category.
 
-<!-- <div class="supplementary"> -->
-<!-- Exponentiating the coefficient transforms it from log-odds back into plain odds. This value tells you how the odds of being in the specified category (compared to the reference category) change with a one-unit increase in the independent variable. A value above 1 indicates an increase in odds, a value below 1 indicates a decrease, and a value of 1 means no change.   -->
-<!-- Example : Suppose you have a multinomial logistic regression model predicting the preferred type of pet (cats, dogs, or birds, with "birds" as the reference category) based on an independent variable like age. If the coefficient for "cats" is 0.5, then the log-odds of preferring cats over birds increase by 0.5 for each additional year of age. Exponentiating 0.5 gives you the odds ratio (about 1.65), indicating that with each additional year of age, the odds of preferring cats over birds increase by 65%. -->
-<!-- </div> -->
+<div class="supplementary">
+ℹ️ Exponentiating the coefficient transforms it from log-odds back into plain odds. This value tells you how the odds of being in the specified category (compared to the reference category) change with a one-unit increase in the independent variable. A value above 1 indicates an increase in odds, a value below 1 indicates a decrease, and a value of 1 means no change.
+Example : Suppose you have a multinomial logistic regression model predicting the preferred type of pet (cats, dogs, or birds, with "birds" as the reference category) based on an independent variable like age. If the coefficient for "cats" is 0.5, then the log-odds of preferring cats over birds increase by 0.5 for each additional year of age. Exponentiating 0.5 gives you the odds ratio (about 1.65), indicating that with each additional year of age, the odds of preferring cats over birds increase by 65%.
+</div>
 
-<!-- --- -->
+---
 
-<!-- ```{r} -->
-<!-- x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) -->
-<!-- y <- factor(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3)) -->
-<!-- multi_mod <- multinom(y ~ x) -->
-<!-- summary(multi_mod) -->
-<!-- ``` -->
+```{r}
+x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+y <- factor(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3))
+multi_mod <- multinom(y ~ x)
+summary(multi_mod)
+```
 
-<!-- --- -->
+## Panel Data Analysis
 
-<!-- ### Panel Data Analysis -->
+- Panel data, also known as longitudinal or cross-sectional time-series data, are data that are collected on multiple entities (such as individuals, firms, countries) over multiple time periods.
+- Need to install and laod the ```plm``` package
+- syntax is `plm(formula, data, index, model)`, where index is a vector giving the names or indices of the individual and the time indexes, and model specifies the type of model: within, random or pooling
 
-<!-- - Panel data, also known as longitudinal or cross-sectional time-series data, are data that are collected on multiple entities (such as individuals, firms, countries) over multiple time periods. -->
-<!-- - Need to install and laod the ```plm``` package -->
-<!-- - syntax is plm(formula, data, index, model), where index is a vector giving the names or indices of the individual and the time indexes, and model specifies the type of model: within, random or pooling -->
+---
 
-<!-- --- -->
+- **Within** (Fixed Effects) Model: This model assumes that something within each individual (or group) may impact or bias the independent variable and needs to be controlled for. In other words, individual-specific effects are allowed to be correlated with the other regressors. The within transformation eliminates the individual effect by demeaning the data. The fixed effects model controls for the effect of those time-invariant features of the individuals in the panel in order to allow for a cleaner estimation of the predictors' effect on the outcome variable.
+- **Random** Effects Model: This model assumes that the individual-specific effects are uncorrelated with the other regressors. In this model, variation across entities is assumed to be random and uncorrelated with the predictor or independent variables included in the model. If the random effects assumption holds, the random effects estimator is more efficient than the fixed effects estimator.
+- **Pooling** (Pooled OLS) Model: This model does not control for time-invariant individual-specific heterogeneity, treating the data as a simple cross-section. It essentially pools the data and does not consider the individual effects or group effects in the error term. It might be applicable in situations where there's no reason to assume any fixed or random effects, or for a first pass "naive" regression analysis before moving on to more complex models.
 
-<!-- - **Within** (Fixed Effects) Model: This model assumes that something within each individual (or group) may impact or bias the independent variable and needs to be controlled for. In other words, individual-specific effects are allowed to be correlated with the other regressors. The within transformation eliminates the individual effect by demeaning the data. The fixed effects model controls for the effect of those time-invariant features of the individuals in the panel in order to allow for a cleaner estimation of the predictors' effect on the outcome variable. -->
-<!-- - **Random** Effects Model: This model assumes that the individual-specific effects are uncorrelated with the other regressors. In this model, variation across entities is assumed to be random and uncorrelated with the predictor or independent variables included in the model. If the random effects assumption holds, the random effects estimator is more efficient than the fixed effects estimator. -->
-<!-- - **Pooling** (Pooled OLS) Model: This model does not control for time-invariant individual-specific heterogeneity, treating the data as a simple cross-section. It essentially pools the data and does not consider the individual effects or group effects in the error term. It might be applicable in situations where there's no reason to assume any fixed or random effects, or for a first pass "naive" regression analysis before moving on to more complex models. -->
+---
 
-<!-- --- -->
+```{r}
+data("Produc", package = "plm")
+model <- plm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp,
+             data = Produc, index = c("state","year"), model = "within")
+summary(model)
+```
+Rmq: `?Produc` to get information about the datasets
 
-<!-- ```{r} -->
-<!-- data("Produc", package = "plm") -->
-<!-- model <- plm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, -->
-<!--              data = Produc, index = c("state","year"), model = "within") -->
-<!-- summary(model) -->
-<!-- ``` -->
-<!-- Rmq: `?Produc` to get information about the datasets -->
 
-<!-- --- -->
+## Multilevel Modeling
 
-<!-- ### Multilevel Modeling -->
+- Multilevel models are a type of regression model for data that are grouped, or clustered in more than one category, such as students within classrooms within schools.
+- Need package `lme4`, and once loaded, the lmer function, which is used to fit linear and generalized linear mixed-effects models
+- syntax is lmer(formula, data), where formula describes the model to be fitted and data specifies the data frame containing the variables in the model
+- `lmer(response ~ predictors + (1|group), data)`, where the `(1|group)` term specifies a random intercept for the variable group
 
-<!-- - Multilevel models are a type of regression model for data that are grouped, or clustered in more than one category, such as students within classrooms within schools.  -->
-<!-- - Need package `lme4`, and once loaded, the lmer function, which is used to fit linear and generalized linear mixed-effects models -->
-<!-- - syntax is lmer(formula, data), where formula describes the model to be fitted and data specifies the data frame containing the variables in the model -->
-<!-- - lmer(response ~ predictors + (1|group), data), where the (1|group) term specifies a random intercept for the variable group -->
+The coefficients for the fixed effects can be interpreted in the usual way: for a one unit increase in the independent variable, the dependent variable will increase by the estimated coefficient, ceteris paribus.
+The random effects variance components indicate the degree of variability across the levels of the random effects variable(s).
 
-<!-- The coefficients for the fixed effects can be interpreted in the usual way: for a one unit increase in the independent variable, the dependent variable will increase by the estimated coefficient, ceteris paribus.   -->
-<!-- The random effects variance components indicate the degree of variability across the levels of the random effects variable(s). -->
+---
 
-<!-- --- -->
+```{r}
+data("sleepstudy", package = "lme4")
+mlev_mod <- lmer(Reaction ~ Days + (1|Subject), data = sleepstudy)
+summary(mlev_mod)
+```
 
-<!-- ```{r} -->
-<!-- data("sleepstudy", package = "lme4") -->
-<!-- mlev_mod <- lmer(Reaction ~ Days + (1|Subject), data = sleepstudy) -->
-<!-- summary(mlev_mod) -->
-<!-- ``` -->
+---
 
-<!-- --- -->
+Another example, with two random effects : s, d and dept
 
-<!-- Other example: a dataset of students, schools, and districts. Students are nested within schools, and schools are nested within districts. You're interested in predicting a student's test score based on their age and the school's average class size.   -->
-<!-- Assuming a dataframe 'data' with columns 'score', 'age', 'class_size', 'student', 'school', and 'district' -->
-<!-- ``` -->
-<!-- model <- lmer(score ~ age + class_size + (1|school/district), data = data) -->
-<!-- ``` -->
-<!-- - score ~ age + class_size is specifying the fixed effects part of the model. We're modeling the test score as a function of the student's age and the school's average class size. -->
-<!-- - (1|school/district) is specifying random intercepts for schools and districts. The / notation is a shorthand for nested grouping factors, so this is equivalent to (1|school) + (1|district:school). Each school can have a different baseline test score, and each district can have a different baseline test score that adds to the school effect. -->
+*Dataset InstEval from the lme4 package*
 
-<!-- This model assumes that the average test score might vary from district to district and from school to school within each district. The differences between districts and schools are captured by the random intercepts. The model also assumes that the effect of a student's age and the school's average class size on test scores is fixed, i.e., the same in all districts and schools. -->
+```{r}
+data("InstEval", package = "lme4")
+model_extended <- lmer(y ~ service + (1 | s) + (1 | d), data = InstEval)
+```
+- Fixed effect: service
+- Random effects:
+  - (1 | s): Student (s) random intercept -> Captures student-specific rating biases.
+  - (1 | d): Lecturer (d) random intercept -> Captures lecturer-specific rating tendencies.
 
-<!-- --- -->
+---
 
-<!-- ### Principal Components Analysis (PCA) -->
+```{r}
+summary(model_extended)
+```
 
-<!-- Principal Components Analysis (PCA): technique used for reducing the dimensionality of a dataset while retaining as much of the original variation as possible.  -->
-<!-- This is accomplished by identifying linear combinations of the original variables, called principal components, which account for the most variance in the data. -->
+---
 
-<!-- ```{r, eval=F} -->
-<!-- library(FactoMineR)  # perform the analysis -->
-<!-- library(factoextra)  # extract information for the analysis and provides visualizations (fviz_*) -->
-<!-- ``` -->
+- Intercept (3.283) is the average rating when service = 0 (non-service course).
+- Effect of service1 (-0.09113)
+  - If a lecture is a service course, the average rating drops by 0.091.
+  - T-value = -6.867 (very large), indicating this effect is statistically significant.
 
-<!-- *Creation of a dataset* -->
+*Interpretation:*
 
-<!-- ```{r} -->
-<!-- set.seed(123) -->
-<!-- pca_data <- data.frame(matrix(rnorm(50*15), nrow=50))  # 50 indiv, 15 variables -->
-<!-- colnames(pca_data) <- paste0("var", 1:15) -->
-<!-- rownames(pca_data) <- paste0("indiv", 1:50) -->
-<!-- ``` -->
+- Students rate service courses lower than regular courses.
+- The decrease (-0.091 points) is statistically significant but relatively small in magnitude.
 
-<!-- --- -->
+*Analyse of variance*
 
-<!-- ```{r, fig.height=4} -->
-<!-- pca_res <- PCA(pca_data, scale.unit=TRUE, graph=F)   -->
-<!-- # scale.unit=TRUE to have unit variance before the analysis -->
-<!-- fviz_screeplot(pca_res)   -->
-<!-- # The elbow method to decide how many axes to keep, based on a "scree plot" -->
-<!-- ``` -->
+- Students (s): Variance = 0.1057 (Std.Dev = 0.325) -> Some students systematically rate higher/lower.
+- Lecturers (d): Variance = 0.2715 (Std.Dev = 0.521) -> Some lecturers consistently receive higher/lower ratings.
+- Residual variance (1.3866) -> Most variation remains unexplained by students or lecturers.
 
-<!-- --- -->
 
-<!-- To give an interpretation to the axes, it is common to display the variables on the axes -->
+# Dimensionality Reduction and Cluster Analysis {#dim_reduction_cluster}
 
-<!-- ```{r, fig.height=4} -->
-<!-- fviz_pca_var(pca_res) -->
-<!-- ``` -->
+## Dimensionality Reduction
 
-<!-- --- -->
+- Dimensionality reduction is a technique used to reduce the number of variables in a dataset while retaining as much of the original information as possible
+- It is useful for simplifying complex datasets, visualizing high-dimensional data, and improving the performance of machine learning algorithms
+- Two common techniques for dimensionality reduction are Principal Component Analysis (PCA) and Multiple Correspondence Analysis (MCA)
+- PCA is used for continuous variables, while MCA is used for categorical variables
 
-<!-- To get the coordinates of individuals on the axes -->
+---
 
-<!-- ```{r} -->
-<!-- head(pca_res$ind$coord) -->
-<!-- ``` -->
+**Principal Components Analysis (PCA)**
 
-<!-- ```{r, fig.height=3.5} -->
-<!-- fviz_pca_ind(pca_res) -->
-<!-- ``` -->
+Steps:
 
-<!-- --- -->
+1. Standardize the dataset (mean = 0, variance = 1).
+2. Compute the covariance matrix (identifies relationships between features).
+3. Compute eigenvalues & eigenvectors (find new principal components).
+4. Project data onto new principal components (reduce dimensions).
 
-<!-- ### Multiple Correspondence Analysis (MCA) -->
+Example: PCA on the Iris dataset.
 
-<!-- Multiple Correspondence Analysis (MCA) is a technique used for analyzing the association between categorical variables. It is a type of PCA that is specifically designed for categorical data. -->
-<!-- It allows to reduce the number of categorical variables and to find relationships between these variables. MCA is often used in survey or polling data analysis where the responses are categorical. -->
+```{r}
+data("iris")
+```
 
-<!-- Creation of a dataset -->
+Can be performed with the `stats` package (already installed) or with `FactoMineR` and `factoextra`
 
-<!-- ```{r} -->
-<!-- mca_data <- data.frame(matrix(sample(0:5, 100*15, replace = TRUE), ncol = 15))   -->
-<!-- # 100 indiv, 15 variables, likert scale (0 to 5) -->
-<!-- colnames(mca_data) <- paste0("var", 1:15) -->
-<!-- mca_data <- data.frame(lapply(mca_data, as.factor)) -->
-<!-- ``` -->
+- `FactoMineR` is used to perform the analysis
+- `factoextra` is used to extract information for the analysis and provides visualizations (`fviz_`)
 
-<!-- --- -->
+---
 
-<!-- ```{r, fight.height=4} -->
-<!-- mca_res <- MCA(mca_data, graph = F) -->
-<!-- fviz_screeplot(mca_res) -->
-<!-- ``` -->
+**with `stats`**
 
-<!-- --- -->
+```{r}
+iris_num <- iris[, -5]  # Remove the species column
+pca_result <- prcomp(iris_num, scale = TRUE, center = TRUE)
+```
 
-<!-- ```{r, fig.height=4} -->
-<!-- fviz_mca_var(mca_res, choice="var") -->
-<!-- ``` -->
+- `center = TRUE` -> Mean-Centering the Data \
+  Each variable's mean is subtracted from its values, so the new mean becomes 0. This ensures that PCA captures variation relative to the mean rather than absolute values. If data is not centered, the first principal component might be biased towards large mean values.
+- `scale = TRUE` -> Standardizing the Data \
+  Each variable is divided by its standard deviation, so the new standard deviation becomes 1. This ensures that PCA captures the relative importance of variables based on their variance. If data is not scaled, variables with larger variances might dominate the principal components.
 
-<!-- --- -->
+---
 
-<!-- ```{r} -->
-<!-- head(mca_res$ind$coord) -->
-<!-- ``` -->
+```{r}
+summary(pca_result)
+```
 
-<!-- ```{r, fig.height=4} -->
-<!-- fviz_mca_ind(mca_res) -->
-<!-- ``` -->
+PC1 + PC2 explain 95.8% of the total variance in the data. \
+PC3 adds 4% more variance, but PC4 contributes almost nothing.\
+2 PCs is sufficient.
 
-<!-- --- -->
+---
 
-<!-- **Practice** -->
+The screen plot is a visual representation of the variance explained by each principal component. It helps to decide how many components to keep. \
+The elbow method is often used to identify the number of components that explain most of the variance. \
+The point where the curve starts to flatten is a good indicator of the number of components to keep.
 
-<!-- Load the dataset questionnaire.rdata and perform a PCA and a MCA.    -->
-<!-- <http://www.duboishome.info/dimitri/cours/edeg/R/files/questionnaire.rdata> -->
+```{r, fig.height=4}
+screeplot(pca_result, type = "lines", main = "Scree Plot")
+```
 
-<!-- The dataset is composed of responses from 248 individuals to 39 questions. Responses ranges from 0 to 5. -->
+---
 
-<!-- --- -->
+```{r}
+pca_data <- data.frame(pca_result$x, Species = iris$Species)
+head(pca_data)
+```
+`pca_result$x` contains the coordinates of the original observations projected onto the principal components (PCs). \
+Each row represents an observation (data point), and each column represents a Principal Component (PC1, PC2, etc.).
 
-<!-- ###  K-Means Clustering -->
+---
 
-<!-- K-means clustering is a technique used for partitioning a dataset into K clusters based on their similarity. It is an unsupervised learning method that can be used for exploratory data analysis. -->
+Scatter plot of the first two principal components, colored by species.
 
-<!-- ```{r} -->
-<!-- set.seed(123) -->
-<!-- data <- matrix(rnorm(200), ncol = 2) -->
+```{r, fig.height=4}
+ggplot(pca_data, aes(x = PC1, y = PC2, color = Species)) +
+  geom_point(size = 3) +
+  labs(title = "PCA Projection of Iris Dataset")
+```
 
-<!-- # perform k-means clustering -->
-<!-- k <- kmeans(data, centers = 3) -->
-<!-- ``` -->
+---
 
-<!-- --- -->
+**Same analysis with `FactoMineR` and `factoextra`**
 
-<!-- Plot the result -->
+```{r}
+pca_result_2 <- PCA(iris_num, graph=F)
+summary(pca_result_2)
+```
 
-<!-- ```{r, fig.height=4} -->
-<!-- ggplot() +  -->
-<!--   geom_point(aes(x=data[,1], y=data[,2], col=colors()[k$cluster])) +  -->
-<!--   geom_point(aes(x=k$centers[,1], y=k$centers[, 2], col=colors()[1:3]), shape=3, size=5) +  -->
-<!--   labs(x="", y="", color="Clusters") + guides(color="none") -->
-<!-- ``` -->
+---
 
-<!-- --- -->
+**screeplot**
 
-<!-- **Practice** -->
+```{r, fig.height=4}
+fviz_screeplot(pca_result_2)
+```
 
-<!-- Create 3 clusters of participants based on their responses in the questionnaire. Then display the individuals wrt their coordinates in the two first axes of the PCA analysis. -->
+---
+
+**Biplot**: displays both the observations and the variables on the same plot. \
+The observations are represented by points, and the variables are represented by arrows. \
+
+```{r, fig.height=4}
+fviz_pca_biplot(pca_result_2, label="var", habillage=as.factor(iris$Species), addEllipses = T, repel = TRUE)
+```
+
+## K-Means Clustering
+
+K-means clustering is a technique used for **partitioning a dataset into K clusters** based on their similarity. It is an unsupervised learning method that can be used for exploratory data analysis.
+
+Clusters are built around centroids, which are the mean of the data points in each cluster. The goal is to **minimize the sum of squared distances between each data point and the centroid of its cluster, and to maximize the distance between centroids**.
+
+```{r}
+set.seed(123)  # for reproducibility
+```
+
+We use `iris_num` dataset, already standardized and without the species column.\
+As for dimensionality reduction, standardizing the data is important for k-means clustering, otherwise variables with larger scales might dominate the clustering process.
+
+---
+
+```{r}
+kmeans_result <- kmeans(iris_num, centers = 3, nstart = 25)
+kmeans_result
+```
+💡 *Notes:* \
+Here we set 3 clusters because we know that the Iris dataset has 3 species. \
+But in practice, the number of clusters is often unknown and must be determined using methods like the elbow method, silhouette method, or gap statistic.
+
+---
+
+We add the cluster column to the original dataset
+
+```{r}
+iris$cluster <- as.factor(kmeans_result$cluster)
+table(iris$Species, iris$cluster)
+```
+
+Comparison between the clusters and the actual species shows that the clustering algorithm has done a good job of separating the species into different clusters.
+
+---
+
+**Visualizing the Clusters**
+
+We can visualize the clusters by plotting the first two principal components and coloring the points by cluster.\
+We indeed saw that with PCA, the first two components explain most of the variance in the data.
+
+[*Remember: `pca_data <- data.frame(pca_result$x, Species = iris$Species)`, where `pca_result$x` contains the coordinates of the original observations projected onto the principal components (PCs).*]{style=font-size:0.75em}
+
+```{r, fig.height=3.25}
+ggplot(pca_data, aes(x = PC1, y = PC2, color = as.factor(kmeans_result$cluster))) +
+  geom_point(size = 3) +
+  labs(title = "K-Means Clustering on PCA Projection", color = "Cluster")
+```
+
+---
+
+**Choose the optimal number of clusters with the Elbow Method**
+
+The Elbow Method is a heuristic technique used to determine the optimal number of clusters in a dataset. It involves plotting the within-cluster sum of squares (WCSS) against the number of clusters, and looking for the "elbow" point where the rate of decrease slows down.
+
+We test different numbers of clusters (from 1 to 10) and calculate the WCSS for each.
+
+```{r}
+wcss <- numeric(10)
+for (i in 1:10) {
+  kmeans_result <- kmeans(iris_num, centers = i, nstart = 25)
+  wcss[i] <- kmeans_result$tot.withinss
+}
+```
+
+---
+
+Then we plot the WCSS against the number of clusters.
+
+```{r, fig.height=4}
+ggplot(data.frame(k = 1:10, wcss), aes(x = k, y = wcss)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Elbow Method for Optimal Number of Clusters", x = "Number of Clusters", y = "Within-Cluster Sum of Squares")
+```
+
+The "elbow" point is where the rate of decrease slows down. In this case, it's at k = 3, which confirms that 3 clusters is a good choice for the Iris dataset.
 
 
 # Sources {#sources}
 
--   <https://www.r-tutor.com/r-introduction>
--   a complete book on data analysis with R [here](https://larmarange.github.io/analyse-R/analyse-R.pdf)
--   the class of Julien Barnier [here](https://juba.github.io/tidyverse/index.html)
--   the website <https://www.tidyverse.org/>
--   the website [R for data science](https://r4ds.had.co.nz/index.html)
--   the website dedicated to ggplot2 <http://ggplot2.tidyverse.org/reference/>
--   a lot of graph examples with ggplot2 : <http://www.cookbook-r.com/Graphs/>
+- <https://www.r-tutor.com/r-introduction>
+- [a complete book on data analysis with R](https://larmarange.github.io/analyse-R/analyse-R.pdf)
+- [the class of Julien Barnier](https://juba.github.io/tidyverse/index.html)
+- <https://www.tidyverse.org/>
+- <http://ggplot2.tidyverse.org/reference/>
+- [a lot of graph examples with ggplot2](http://www.cookbook-r.com/Graphs/)
+- [R Graphics Cookbook – Winston Chang](https://r-graphics.org/)
+- [R for data science](https://r4ds.had.co.nz/index.html)
+- [R for Data Science (R4DS) – Hadley Wickham & Garrett Grolemund](https://r4ds.hadley.nz/)
+- [Hands-On Machine Learning with R – Bradley Boehmke & Brandon Greenwell](https://bradleyboehmke.github.io/HOML/)
+- [The Art of Data Science – Roger D. Peng & Elizabeth Matsui](https://bookdown.org/rdpeng/artofdatascience/)
+
