@@ -2119,6 +2119,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
 Cluster Analysis</a></li>
 <li><a href="#/sources">Sources</a></li>
 </ul>
+<p>Slides: <a href="https://www.duboishome.info/dimitri/cours/edeg/R" class="uri">https://www.duboishome.info/dimitri/cours/edeg/R</a></p>
 </section>
 <section>
 <section id="introduction" class="title-slide slide level1">
@@ -2653,8 +2654,8 @@ the wife in each household (function <code>abs</code>)</li>
 </ol>
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>education_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Bachelor&quot;</span>, <span class="st">&quot;Master&quot;</span>, <span class="st">&quot;Ph.D&quot;</span>)</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>(education <span class="ot">&lt;-</span> <span class="fu">sample</span>(education_levels, <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
-<pre><code>##  [1] &quot;Ph.D&quot;     &quot;Master&quot;   &quot;Bachelor&quot; &quot;Bachelor&quot; &quot;Ph.D&quot;     &quot;Master&quot;  
-##  [7] &quot;Master&quot;   &quot;Master&quot;   &quot;Ph.D&quot;     &quot;Bachelor&quot;</code></pre>
+<pre><code>##  [1] &quot;Master&quot;   &quot;Master&quot;   &quot;Ph.D&quot;     &quot;Ph.D&quot;     &quot;Bachelor&quot; &quot;Bachelor&quot;
+##  [7] &quot;Master&quot;   &quot;Bachelor&quot; &quot;Ph.D&quot;     &quot;Master&quot;</code></pre>
 <p>💡 <code>sample()</code> takes a sample of the specified size from
 the elements of x using either with or without replacement.</p>
 </section>
@@ -2688,26 +2689,26 @@ factor)</li>
 <span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>df1</span></code></pre></div>
 <pre><code>##    gender age education
-## 1       F  53      Ph.D
-## 2       F  55    Master
-## 3       M  79  Bachelor
-## 4       M  80  Bachelor
-## 5       F  70      Ph.D
-## 6       M  80    Master
-## 7       M  50    Master
-## 8       M  99    Master
-## 9       F  43      Ph.D
-## 10      M  66  Bachelor</code></pre>
+## 1       M  65    Master
+## 2       F  29    Master
+## 3       F  91      Ph.D
+## 4       F  22      Ph.D
+## 5       M  56  Bachelor
+## 6       F  75  Bachelor
+## 7       F  86    Master
+## 8       F  85  Bachelor
+## 9       F  26      Ph.D
+## 10      F  71    Master</code></pre>
 </section>
 <section class="slide level2">
 
 <p>We can access to a variable/column/vector in a dataframe with
 <code>$</code></p>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>gender</span></code></pre></div>
-<pre><code>##  [1] F F M M F M M M F M
+<pre><code>##  [1] M F F F M F F F F F
 ## Levels: F M</code></pre>
 <div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>gender[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>)]</span></code></pre></div>
-<pre><code>## [1] F M
+<pre><code>## [1] M F
 ## Levels: F M</code></pre>
 </section>
 <section class="slide level2">

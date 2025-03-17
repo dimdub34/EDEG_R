@@ -28,6 +28,8 @@ source("script_source.R", local=knitr::knit_global())
 - [Dimensionality Reduction and Cluster Analysis](#dim_reduction_cluster)
 - [Sources](#sources)
 
+Slides: <https://www.duboishome.info/dimitri/cours/edeg/R>
+
 
 # Presentation and installation of R {#introduction}
 
