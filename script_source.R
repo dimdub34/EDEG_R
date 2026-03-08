@@ -7,6 +7,7 @@ library(pointblank)
 library(gtsummary)
 library(effectsize)
 library(ggstatsplot)
+library(modelsummary)
 
 # Dimensionality reduction
 library(FactoMineR)

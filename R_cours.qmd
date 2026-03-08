@@ -23,7 +23,7 @@ execute:
 ```{r}
 #| include: false
 library(here)
-source(here("script_source.R"), local=knitr::knit_global())
+source(here("script_source.R"))
 ```
 
 --- 
@@ -97,21 +97,21 @@ The initial release of R to the public occurred in 1995, and it quickly gained p
 -   user-friendly interface for R
 -   free, open source and multi-platform
 
-<img src="img/rstudio_start.png" style="height: 500px" />
+![](img/rstudio_start.png){fig-align="center" height="500px"}
 
 ---
 
 **3 areas**
 
--   the R interpreter (console) and terminal
--   the session environment, with the list of variables/objects, their type and their value. Also an history tab with the list of past commands
--   the help area, with also the list of R packages
+- the R interpreter (console) and terminal
+- the session environment, with the list of variables/objects, their type and their value. Also an history tab with the list of past commands
+- the help area, with also the list of R packages
 
 ## The R interpreter
 
--   interprets the code and displays the results
--   the top and bottom arrows to navigate in the history of commands
--   "Enter" key to execute the current line of code
+- interprets the code and displays the results
+- the top and bottom arrows to navigate in the history of commands
+- "Enter" key to execute the current line of code
 
 ```{r}
 10 * 2
@@ -119,8 +119,8 @@ The initial release of R to the public occurred in 1995, and it quickly gained p
 
 --- 
 
--   to store a value one must create a variable and assign the value
--   the assignment operator is `<-`
+- to store a value one must create a variable and assign the value
+- the assignment operator is `<-`
 
 ```{r}
 x <- 10
@@ -275,16 +275,17 @@ File/New File/R Notebook
 💻 **Practice**
 
 - create a new project
-- create a new quarto notebook called "basics"
-- install and load the packages `tidyverse` and `questionr`
+- create a new renv environment
+- create a new Quarto notebook called "basics"
+- install the packages `tidyverse` and `questionr`
 - in the first cell of the quarto document, load `tidyverse` and `questionr`
 
 ::: {.supplementary}
-ℹ️ The questionr package in R is a useful tool designed primarily for social scientists, providing a set of functions to facilitate the analysis of survey data. It was developed to simplify common tasks associated with survey data analysis, including data manipulation, summarization, and visualization, as well as to provide easy access to descriptive statistics that are particularly relevant in social science research.
+ℹ️ The `questionr` package is a useful tool designed primarily for social scientists, providing a set of functions to facilitate the analysis of survey data. 
 :::
 
 
-# Data structures {#data_structures}
+# Data types and structures {#data_structures}
 
 ## Types of data
 
@@ -583,7 +584,9 @@ education_levels <- c("Bachelor", "Master", "Ph.D")
 (education <- sample(education_levels, 10, replace = TRUE))
 ```
 
+::: {.lightbulb}
 💡 `sample()` takes a sample of the specified size from the elements of x using either with or without replacement.  
+:::
 
 ---
 
@@ -748,7 +751,7 @@ Set of libraries aimed at facilitating the management of the dataset (data clean
 
 `library(tidyverse)`
 
-<img src="img/tidyverse.png" style="height: 200px" />
+![](img/tidyverse.png){fig-align="center" height="200px"}
 
 readr (import of data), tibble (new dataframe), forcats (qualitative variables), stringr (for characters), tidyr (data formatting), dplyr (data manipulation), ggplot2 (visualization), purrr (programming)
 
@@ -792,7 +795,7 @@ To export a dataset in a csv file, there exists write_csv and write_csv2.
 
 ## Renaming variables
 
-- Cleaning Column Names with `janitor`
+- Cleaning Column Names with package `janitor`
 - Raw datasets (Excel, Surveys) often have "dirty" column names: spaces, accents, special characters, or inconsistent capitalization.
 - d`f$Nom de l'élève ! (en 2024)` is tedious and error-prone.
 
@@ -804,9 +807,15 @@ Before: "First Name", "Age (2024)", "Sexe/Genre"
 After: "first_name", "age_2024", "sexe_genre"
 ```
 
+::: {.lightbulb}
+💡 *Notes:*
+
+`janitor::clean_names()` tells the interpreter to use function `clean_names` from package `janitor`.  
+:::
+
 ## Recoding categorical variables
 
-With forcats {#forcats}
+With forcats
 
 ### Rename the levels
 
@@ -878,11 +887,13 @@ hdv2003$qualif_rec <- fct_collapse(
 freq(hdv2003$qualif_rec)
 ```
 
+::: {.lightbulb}
 💡 *Notes:*  
 
 1. `fct_other()` to group a set of categories into the "Other" category.  
 2. `fct_lump()` to group the least frequent categories into the "Other" category.  
 3. Graphical interface provided by `questionr`, accessible via **`Addins`** → **`Levels Recoding`**.  
+:::
 
 ---
 
@@ -975,7 +986,9 @@ hdv2003$age_classe2 <- cut(
 freq(hdv2003$age_classe2)
 ```
 
+::: {.lightbulb}
 💡 package *questionr* provides a graphical interface for *cut*: Addins/Numeric range dividing
+:::
 
 ---
 
@@ -1055,9 +1068,7 @@ Man with more than 2 B&S               453  22.7 22.7
 ## Checking for duplicates
 
 - Data collection (surveys, web scraping) often generates duplicate rows.
-
 - Duplicates bias your descriptive statistics and break the independence assumption of many models.
-
 - `distinct()` keeps only unique rows and removes all subsequent identical copies.
 
 ```{r}
@@ -1093,9 +1104,9 @@ to manipulate the data, it has to be well organized, "tidy":
 
 ---
 
-example of a non-tidy dataset: population of 3 countries over 4 years
+Example of a non-tidy dataset: population of 3 countries over 4 years
 
-![](img/data_non_tidy.png){fig-align="center" width="400px"}
+![](img/data_non_tidy.png){fig-align="center" width="200px"}
 
 for this dataset to be "tidy", we need
 
@@ -1170,7 +1181,7 @@ pivot_wider(data=tidy_ex1, names_from=variable, values_from=value)
 ## Data Integrity
 
 - Before data analysis, you must check that your data follows specific rules (e.g., ages cannot be negative, percentages must be between 0 and 100).
-- Validation Framework (`pointblank`): A formal way to document and automate data quality checks.
+- Package `pointblank`: A formal way to document and automate data quality checks.
 
 ```{r}
 #| echo: true
@@ -1785,7 +1796,7 @@ the p-value is lower than 5% so we reject $H_0$, the non-parametric MW test must
 
 ---
 
-**Mann-Whitney test** : wilcox.test with the argument paired=F because the sample are drawn from different populations (athletes and non-athletes are not the same individuals)
+**Mann-Whitney test** : wilcox.test with the argument paired=F (default) because the sample are drawn from different populations (athletes and non-athletes are not the same individuals)
 
 ```{r}
 wilcox.test(age ~ sport, data=hdv2003)
@@ -1837,7 +1848,9 @@ cor.test(rp2018$cadres, rp2018$dipl_sup)
 
 we reject $H_0$, the correlation between the two variables is significantly different from zero
 
+::: {.lightbulb}
 💡 If the relation is not linear the **Spearman correlation test** (based on ranks) is more suitable : `cor.test(rp2018$cadres, rp2018$dipl_sup, method="spearman")`
+:::
 
 ---
 
@@ -2200,15 +2213,60 @@ ggplot(rp) +
 
 ---
 
+### Combining Figures with patchwork
+
+```{r}
+#| echo: true
+#| eval: false
+library(patchwork)
+
+# Simple syntax to align plots
+(p1 + p2) / p3 + plot_annotation(tag_levels = 'A')
+```
+
+---
+
+### Statistical Visualization with ggstatsplot {#ggstats_intro}
+
+- `ggstatsplot` creates information-rich plots that include statistical details (test results, effect sizes) directly in the graphic.
+- Website: <https://indrajeetpatil.github.io/ggstatsplot/>
+
+```{r}
+#| echo: true
+library(ggstatsplot)
+
+# Boxplot + Violin + Automated Statistical Test
+ggbetweenstats(
+  data = hdv2003,
+  x = sport,
+  y = age,
+  title = "Distribution of Age by Sport Practice"
+)
+```
+
+---
+
+```{r}
+#| echo: true
+ggpiestats(
+  data = hdv2003,
+  x = sport,
+  y = sexe,
+  title = "Composition of Sport Practice by Gender"
+)
+```
+
+---
+
 **Practice**
 
 With the dataset rp2018
 
--   a geom_point with x=dipl_aucun and y=ouvr, with axes' labels, and points in the blue color
--   same graph than above with a color mapping on region
--   boxplot: distribution of the variable proprio depending on the size of the department (pop_cl)
--   geom_point with x=dipl_sup and y=cadres, with a graph for each region (facet_wrap)
--   boxplot: distribution of the average proportion of owners by department inside each region
+- a geom_point with x=dipl_aucun and y=ouvr, with axes' labels, and points in the blue color
+- same graph than above with a color mapping on region
+- boxplot: distribution of the variable proprio depending on the size of the department (pop_cl)
+- geom_point with x=dipl_sup and y=cadres, with a graph for each region (facet_wrap)
+- boxplot: distribution of the average proportion of owners by department inside each region
 
 
 # Multivariate analysis {#multivariate_analysis}
@@ -2232,8 +2290,30 @@ Linear regression is a technique used for modelling the relationship between a d
 x1 <- c(1, 2, 3, 4, 5)
 x2 <- c(2, 3, 2, 5, 4)
 y <- c(2, 3, 5, 7, 11)
-lm_mod <- lm(y ~ x1 + x2)
-summary(lm_mod)
+model_ols <- lm(y ~ x1 + x2)
+summary(model_ols)
+```
+
+::: {.lightbulb}
+💡 Check the Adjusted $R^2$ when comparing models with different numbers of predictors to avoid over-fitting.
+:::
+
+---
+
+**Model diagnostic**
+
+- colinearity of independant variables
+- homocedascity of residuals
+
+```{r}
+library(car)  # (Companion to Applied Regression)
+library(lmtest)
+
+# VIF (Variance Inflation Factor) should be < 5 (ideally < 2.5)
+vif(model_ols)
+
+# Breusch-Pagan test: H0 = homoscedasticity
+bptest(model_ols)
 ```
 
 ---
@@ -2255,12 +2335,15 @@ glm_mod <- glm(y ~ x, family=binomial)
 summary(glm_mod)
 ```
 
-<div class="supplementary">
-ℹ️ The coefficients are odds ratios: for a one unit increase in the independent variable, the odds of the outcome occurring are $e^\beta$ times larger, where $\beta$ is the coefficient for the independent variable. If $β = 1.3$, then $e^\beta = 3.675$. This means that for each additional unit of $x$, the odds of $y=1$ are 3.67 times higher.
+::: {.supplementary}
+ℹ️ The coefficients are log-odds. To interpret them, we use the Odds Ratio ($e^\beta$).If $\beta = 1.3$, then $e^\beta = 3.675$. This means that for each additional unit of $x$, the odds (the ratio of probability of occurrence vs. non-occurrence) of $y=1$ are multiplied by $3.67$.  
+To convert an odds to a probability: $P = \frac{\text{Odds}}{1 + \text{Odds}}$. With an odds of $3.67$, the predicted probability is $3.67 / (1 + 3.67) = 0.786$ (78.6%).  
+`exp(coef(glm_mod))`
+:::
 
-To convert odds to a probability : Probability = Odds / (1 + Odds).
-With odds of 3.67, the probability would be 3.67 / (1 + 3.67) = 0.786 or 78.6%. So, for each additional unit of $x$, the probability of $y=1$ increases by 78.6%, ceteris paribus.
-</div>
+::: {.lightbulb}
+💡 AIC (Akaike Information Criterion): Lower values indicate a better fit when comparing models.
+:::
 
 ---
 
@@ -2269,35 +2352,41 @@ With odds of 3.67, the probability would be 3.67 / (1 + 3.67) = 0.786 or 78.6%. 
 - Multinomial logistic regression is a technique used for modelling the relationship between a categorical dependent variable with more than two levels and one or more independent variables
 - estimates $k-1$ models, where $k$ is the number of levels of the dependent variable
 - each of these models compares one of the $k-1$ categories to a reference category
-- performed using the **`multinom()`** function from the nnet package
+- performed using the **`multinom()`** function from the `nnet` package
 - multinom(formula, data)
 
 The coefficients in the output can be interpreted similarly to binary logistic regression, but each coefficient now corresponds to the log of the odds of the outcome being in the corresponding category versus the reference category.
 
-<div class="supplementary">
+::: {.supplementary}
 ℹ️ Exponentiating the coefficient transforms it from log-odds back into plain odds. This value tells you how the odds of being in the specified category (compared to the reference category) change with a one-unit increase in the independent variable. A value above 1 indicates an increase in odds, a value below 1 indicates a decrease, and a value of 1 means no change.
 Example : Suppose you have a multinomial logistic regression model predicting the preferred type of pet (cats, dogs, or birds, with "birds" as the reference category) based on an independent variable like age. If the coefficient for "cats" is 0.5, then the log-odds of preferring cats over birds increase by 0.5 for each additional year of age. Exponentiating 0.5 gives you the odds ratio (about 1.65), indicating that with each additional year of age, the odds of preferring cats over birds increase by 65%.
-</div>
+:::
 
 ---
 
 ```{r}
 x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 y <- factor(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 3))
-multi_mod <- multinom(y ~ x)
+multi_mod <- multinom(y ~ x, trace=F)  # trace = FALSE désactive l'affichage des itérations
 summary(multi_mod)
 ```
+
+::: {.lightbulb}
+💡 If your categories have a natural order (e.g., "Low", "Medium", "High"), use an Ordered Logit model (`polr` from `MASS` package) instead of a multinomial model.
+:::
 
 ## Panel Data Analysis
 
 - Panel data, also known as longitudinal or cross-sectional time-series data, are data that are collected on multiple entities (such as individuals, firms, countries) over multiple time periods.
-- Need to install and laod the ```plm``` package
+- Package `plm`
 - syntax is `plm(formula, data, index, model)`, where index is a vector giving the names or indices of the individual and the time indexes, and model specifies the type of model: within, random or pooling
 
 ---
 
 - **Within** (Fixed Effects) Model: This model assumes that something within each individual (or group) may impact or bias the independent variable and needs to be controlled for. In other words, individual-specific effects are allowed to be correlated with the other regressors. The within transformation eliminates the individual effect by demeaning the data. The fixed effects model controls for the effect of those time-invariant features of the individuals in the panel in order to allow for a cleaner estimation of the predictors' effect on the outcome variable.
+
 - **Random** Effects Model: This model assumes that the individual-specific effects are uncorrelated with the other regressors. In this model, variation across entities is assumed to be random and uncorrelated with the predictor or independent variables included in the model. If the random effects assumption holds, the random effects estimator is more efficient than the fixed effects estimator.
+
 - **Pooling** (Pooled OLS) Model: This model does not control for time-invariant individual-specific heterogeneity, treating the data as a simple cross-section. It essentially pools the data and does not consider the individual effects or group effects in the error term. It might be applicable in situations where there's no reason to assume any fixed or random effects, or for a first pass "naive" regression analysis before moving on to more complex models.
 
 ---
@@ -2310,12 +2399,18 @@ summary(model)
 ```
 Rmq: `?Produc` to get information about the datasets
 
+::: {.lightbulb}
+💡 The Hausman Test: A statistical test used to decide between Fixed Effects and Random Effects.$H_0$: Random Effects is preferred (it is more efficient).$H_1$: Fixed Effects is necessary (Random Effects is biased). `phtest(model_fixed, model_random)`
+:::
 
 ## Multilevel Modeling
 
 - Multilevel models are a type of regression model for data that are grouped, or clustered in more than one category, such as students within classrooms within schools.
+
 - Need package `lme4`, and once loaded, the lmer function, which is used to fit linear and generalized linear mixed-effects models
+
 - syntax is lmer(formula, data), where formula describes the model to be fitted and data specifies the data frame containing the variables in the model
+
 - `lmer(response ~ predictors + (1|group), data)`, where the `(1|group)` term specifies a random intercept for the variable group
 
 The coefficients for the fixed effects can be interpreted in the usual way: for a one unit increase in the independent variable, the dependent variable will increase by the estimated coefficient, ceteris paribus.
@@ -2328,6 +2423,16 @@ data("sleepstudy", package = "lme4")
 mlev_mod <- lmer(Reaction ~ Days + (1|Subject), data = sleepstudy)
 summary(mlev_mod)
 ```
+
+---
+
+- Fixed Effect Intercept: The average starting point for all groups.
+- Random Effect Variance: Shows how much groups differ from the average intercept.
+- Residual Variance: The variation remaining unexplained after accounting for both fixed and random effects.
+
+::: {.lightbulb}
+💡 If the variance of your random effect is close to zero, a standard OLS regression might be sufficient. Use a Likelihood Ratio Test (`anova(model_ols, model_lmer)`) to justify the multilevel approach.
+:::
 
 ---
 
@@ -2367,6 +2472,54 @@ summary(model_extended)
 - Students (s): Variance = 0.1057 (Std.Dev = 0.325) -> Some students systematically rate higher/lower.
 - Lecturers (d): Variance = 0.2715 (Std.Dev = 0.521) -> Some lecturers consistently receive higher/lower ratings.
 - Residual variance (1.3866) -> Most variation remains unexplained by students or lecturers.
+
+
+## Comparing Models with modelsummary {#modelsummary_tables}
+
+- In research, we usually compare a baseline model with augmented versions.
+- Package `modelsummary` creates highly customizable tables for multiple models (OLS, Logit, GLM, etc.).
+
+```{r}
+library(modelsummary)
+
+# Define a list of models
+models <- list(
+  "Base OLS"     = lm(heures.tv ~ age + sexe, data = hdv2003),
+  "Full OLS"     = lm(heures.tv ~ age + sexe + sport, data = hdv2003),
+  "Logit (Sport)" = glm(sport ~ age + sexe, data = hdv2003, family = binomial)
+)
+```
+
+---
+
+```{r}
+# Generate the table
+modelsummary(models, stars = TRUE, statistic = "std.error", gof_omit = "AIC|BIC", output="markdown")
+```
+
+---
+
+**Key Features for Publications**
+
+- Stars and Significance: Use stars = TRUE to automatically add the standard academic p-value markers (`* p < 0.1, ** p < 0.05, *** p < 0.01`).
+- Custom Statistics: You can choose to display standard errors, t-statistics, or confidence intervals below the coefficients.
+- Global Goodness-of-Fit (GOF): It automatically includes $R^2$, Adjusted $R^2$, and Number of Observations at the bottom.
+- Multi-Format Export:
++ output = "table.docx" for MS Word.
++ output = "table.tex" for LaTeX/PDF.
++ output = "markdown" for Quarto/HTML.
+
+## Visualizing Coefficients: modelplot {#modelplot_advanced}
+
+- Tables are for papers, but plots are for presentations.
+- Package `modelplot` allows you to visualize coefficients and their 95% confidence intervals across different models simultaneously.
+
+```{r}
+# Visual comparison of coefficients
+modelplot(models) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Comparison of Estimates across Models")
+```
 
 
 # Dimensionality Reduction and Cluster Analysis {#dim_reduction_cluster}
