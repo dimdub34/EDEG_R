@@ -8,3 +8,5 @@
 - Descriptive Statistics
 - Data Visualization
 - Multivariate Analysis
+
+Slides are [here](R_cours.html)

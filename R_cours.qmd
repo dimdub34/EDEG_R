@@ -13,7 +13,7 @@ format:
     self-contained: true
     transition: fade
     code-line-numbers: false
-    footer: "Doctoral Course - R & Data Science"
+    footer: "R & Data Science"
     logo: img/R_logo.png
 execute:
   echo: true
