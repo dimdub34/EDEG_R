@@ -46,6 +46,8 @@ source(here("script_source.R"))
 Slides: <https://www.duboishome.info/dimitri/cours/edeg/R>
 
 
+<!-- *** Presentation and installation of R *** -->
+
 # Presentation and installation of R {#introduction}
 
 ---
@@ -90,6 +92,8 @@ The initial release of R to the public occurred in 1995, and it quickly gained p
 - R : <https://cran.r-project.org/>
 - RStudio : <https://posit.co/>
 
+
+<!-- *** RStudio *** -->
 
 # RStudio {#rstudio}
 
@@ -169,7 +173,7 @@ File/New Project
 
 ![New Project](img/newProject.png)
 
-## Here package
+## Package `here`
 
 - Using absolute paths like `setwd("C:/Users/Name/Documents/Project")` makes the code non-portable (it will fail on any other computer).
 - The `here` package creates paths relative to the project's root directory, regardless of where your script or Quarto file is located.
@@ -196,6 +200,15 @@ my_data <- read_csv(here("data", "raw_data.csv"))
     - `renv::init()`: Set up the project library.
     - `renv::snapshot()`: Save the exact versions of all packages used.
     - `renv::restore()`: Replicate the environment on a colleague's computer.
+
+```{r}
+#| eval: false
+
+install.packages("renv")
+renv::init()
+# install needed packages
+renv::snapshot()  # update the snapshot (renv.lock)
+```
 
 ::: {.lightbulb}
 💡 Including a `renv.lock` file in your data repository (like OSF or Zenodo) is the gold standard for reproducible research.
@@ -247,11 +260,11 @@ File/New File/R Notebook
 
 **Why use Quarto for Research?**
 
-- **Polyglotte**: Python, R, Julia and OJS in the same document
-- **Native Citations**: Easily manage bibliographies (`.bib`) and cross-references (Figures, Tables, Equations).
-- **Consistent Output**: Switch between PDF (LaTeX), HTML, and MS Word without changing your code.
-- **Advanced Layouts**: Create complex multi-column layouts or tabsets for your analysis.
-- **Publication Ready**: Many scientific journals now provide Quarto templates for direct submission.
+- *Polyglotte*: Python, R, Julia and OJS in the same document
+- *Native Citations*: Easily manage bibliographies (`.bib`) and cross-references (Figures, Tables, Equations).
+- *Consistent Output*: Switch between PDF (LaTeX), HTML, and MS Word without changing your code.
+- *Advanced Layouts*: Create complex multi-column layouts or tabsets for your analysis.
+- *Publication Ready*: Many scientific journals now provide Quarto templates for direct submission.
 
 ## Markdown
 
@@ -274,18 +287,20 @@ File/New File/R Notebook
 
 ---
 
-💻 **Practice**
+## 💻 Practice
 
 - create a new project
-- create a new renv environment
-- create a new Quarto notebook called "basics"
-- install the packages `tidyverse` and `questionr`
-- in the first cell of the quarto document, load `tidyverse` and `questionr`
+- create a `renv` environment
+- create a new Quarto notebook
+- install the packages `here`, `tidyverse` and `questionr`
+- in the first chunk of the quarto document, load `here`, `tidyverse` and `questionr`
 
 ::: {.supplementary}
 ℹ️ The `questionr` package is a useful tool designed primarily for social scientists, providing a set of functions to facilitate the analysis of survey data. 
 :::
 
+
+<!-- *** Data Types and Structures *** -->
 
 # Data types and structures {#data_structures}
 
@@ -557,7 +572,7 @@ colMeans(mat)
 
 --- 
 
-💻 **Practice**
+### 💻 Practice
 
 **Exercice 1.** With the vectors below, which represent three households:
 
@@ -653,7 +668,7 @@ Click on the object in the Environment tab to view the data table (you can also 
 
 ---
 
-**Useful functions to discover a dataframe**
+### Useful functions to discover a dataframe
 
 - `names(df)`: displays the column names  
 - `nrow(df)`: returns the number of rows  
@@ -672,15 +687,15 @@ dim(hdv2003)
 names(hdv2003)
 ```
 
----
-
-💻 **Practice**
+### 💻 Practice
 
 Load the dataset `hdv2003` from package `questionr`
 
 1. display the dimensions of the dataset
 2. display the names of the variables
 3. display the type of the variables
+
+---
 
 ## The matrix
 
@@ -742,6 +757,8 @@ an element can be accessed by its name with `$`
 mylist$my_vector
 ```
 
+
+<!-- *** Dataset Preparation *** -->
 
 # Dataset preparation {#dataset_preparation}
 
@@ -917,7 +934,7 @@ str(hdv2003$qualif_rec)
 
 ---
 
-💻 **Practice**
+### 💻 Practice
 
 1. with the hdv2003 dataset, recode the variable *relig* in order to get
 
@@ -962,7 +979,7 @@ NA                                      112  5.6   NA
 
 *from a numeric variable*
 
-With `cut` function
+### With `cut` function
 
 - Creating classes from a numerical variable  
 - Example: an income variable  
@@ -994,7 +1011,7 @@ freq(hdv2003$age_classe2)
 
 ---
 
-**`if_else`**
+### `if_else`
 
 - for a binary situation
 - *if_else* takes 3 arguments, the test, the value if the result of the test is TRUE and the value if it is FALSE
@@ -1017,7 +1034,7 @@ freq(hdv2003$statut)
 
 ---
 
-**`case_when`**
+### `case_when`
 
 an extension of *if_else* when several conditions are needed.  
 It is written as condition \~ value  
@@ -1036,7 +1053,7 @@ As TRUE is always TRUE, all the other values will be coded as "Other".
 
 ---
 
-💻 **Practice**
+### 💻 Practice
 
 1.  cut the variable heures.tv to get the following frequency table
 
@@ -1091,7 +1108,6 @@ df_cleaned <- hdv2003 |>
 df_cleaned <- hdv2003 |> 
   distinct(sexe, age, .keep_all = TRUE)
 ```
-
 
 ## Data formatting
 
@@ -1203,6 +1219,8 @@ agent <- create_agent(tbl = hdv2003) |>
 :::
 
 
+<!-- *** Dataset Manipulation *** -->
+
 # Dataset Manipulation {#dataset_manipulation}
 
 ---
@@ -1251,7 +1269,6 @@ Example: all the flights with departure delay between 10 and 15 minutes
 filter(flights, dep_delay >= 10 & dep_delay <= 15)
 ```
 💡 `filter` can be used with `&` (AND) and `|` (OR) operators.
-
 
 ---
 
@@ -1391,7 +1408,7 @@ The result of the pipeline will be stored in the `delays` object
 
 ---
 
-💻 **Practice**
+## 💻 Practice
 
 1.  display rows 100 to 105 (dataset flights)
 2.  display the flights of july
@@ -1561,13 +1578,15 @@ hdv2003 <- hdv2003 |>
 
 ---
 
-## 💻 **Practice**
+## 💻 Practice
 
 1.  display the number of flights by month and display the result in ascending order
 2.  calculate the number of flights to Los Angeles (code LAX) for each month
 3.  calculate the number of flights by month and by destination and display only the max
 4.  calculate the number of flights by month and create a variable that displays the percentage it represents of the annual flights
 
+
+<!-- *** Descriptive statistics *** -->
 
 # Descriptive statistics {#descriptive_statistics}
 
@@ -1634,7 +1653,7 @@ freq(hdv2003$qualif, valid=F, total=T, sort="dec")
 
 ---
 
-💻 **Practice**  
+## 💻 Practice  
 
 1. analyse the variable `heures.tv`
 2. analyse the variable `trav.imp`
@@ -1672,7 +1691,7 @@ hdv2003 |>
 
 ---
 
-### Customizing for Publication {#gtsummary_pub}
+**Customizing for Publication**
 
 Labels: Use label = list(var ~ "Custom Label") to make it readable.
 
@@ -1738,7 +1757,7 @@ round(prop.table(table(hdv2003$qualif, hdv2003$sexe), margin=2) * 100, 2)
 
 ---
 
-*questionr* provides 2 functions, *lprop* and *cprop* (with one decimal by default)
+`questionr` provides 2 functions, `lprop` and `cprop` (with one decimal by default)
 
 ```{r}
 lprop(tb_prof_genre)
@@ -1856,7 +1875,7 @@ we reject $H_0$, the correlation between the two variables is significantly diff
 
 ---
 
-💻 **Pratice**
+### 💻 Pratice
 
 With the dataset *rp2018*
 
@@ -1864,7 +1883,6 @@ With the dataset *rp2018*
   - calculate the average number of unemployed people by departement 
   - test if the average number of unemployed people is different between the regions
 2. Analyse the relationship between pop_tot and pop_chom
-
 
 ## Effect sizes {#effect_sizes}
 
@@ -1907,6 +1925,9 @@ ggbetweenstats(
   title = "Distribution of Age by Sport Practice"
 )
 ```
+
+
+<!-- *** Data Visualization *** -->
 
 # Data Visualization {#visualisations}
 
@@ -2260,7 +2281,7 @@ ggpiestats(
 
 ---
 
-**Practice**
+## 💻 Practice
 
 With the dataset rp2018
 
@@ -2270,6 +2291,8 @@ With the dataset rp2018
 - geom_point with x=dipl_sup and y=cadres, with a graph for each region (facet_wrap)
 - boxplot: distribution of the average proportion of owners by department inside each region
 
+
+<!-- *** Multivariate analysis *** -->
 
 # Multivariate analysis {#multivariate_analysis}
 
@@ -2524,6 +2547,38 @@ modelplot(models) +
 ```
 
 
+## 💻Pratice
+
+### Exercise 1: Linear Regression ($OLS$)
+
+Using the hdv2003 dataset:
+
+- - Run a linear regression to explain heures.tv (TV hours) using age, sexe, and occup (occupational status). Check for multicollinearity using the VIF. 
+- Test for heteroscedasticity using the Breusch-Pagan test. 
+
+---
+
+### Exercise 2: Logistic Regression (Logit)
+
+Using the hdv2003 dataset:
+
+- Estimate a logistic regression where the dependent variable is sport (practicing sport). Use age, sexe, and qualif as predictors. 
+- Display the results as Odds Ratios ($e^\beta$). 
+- Interpret the effect of age on the chances of practicing sport. 
+
+---
+
+### Exercise 3: Panel Data & Model Comparison
+
+Using the Produc dataset:
+
+- Estimate a Fixed Effects ("within") model explaining log(gsp) by log(pcap) and unemp. 
+- Use modelsummary to create a table comparing this model with a simple Pooled OLS version. 
+- Add significance stars and display standard errors in your table. 
+
+
+<!-- *** Dimensionality Reduction and Cluster Analysis *** -->
+
 # Dimensionality Reduction and Cluster Analysis {#dim_reduction_cluster}
 
 ## Dimensionality Reduction
@@ -2697,6 +2752,9 @@ ggplot(data.frame(k = 1:10, wcss), aes(x = k, y = wcss)) +
 
 The "elbow" point is where the rate of decrease slows down. In this case, it's at k = 3, which confirms that 3 clusters is a good choice for the Iris dataset.
 
+
+<!-- *** Reproducible Kit ***-->
+
 # The Reproducible Kit {#reproducible_kit}
 
 To ensure your research is transparent, portable, and future-proof: 
@@ -2710,6 +2768,9 @@ To ensure your research is transparent, portable, and future-proof:
 ::: {.lightbulb}
 💡 Reproductibility is a gift to your future self. In three years, when you need to re-run your models for a "Minor Revision" from a journal, you will be glad you followed these steps! 
 :::
+
+
+<!-- *** Sources *** -->
 
 # Sources {#sources}
 

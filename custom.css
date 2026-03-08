@@ -45,34 +45,29 @@ body {
 .reveal h1,
 .reveal h2,
 .reveal h3,
-.reveal h4,
-.reveal h5,
-.reveal h6 {
+.reveal h4 {
   margin: 0 0 20px 0;
   color: #0B615E;
-  font-family: "Liberation Serif", "Liberation Sans", "Liberation Mono", serif;
-  font-weight: normal;
+  font-family: "Liberation Serif", serif;
+  font-weight: bold; /* Un peu plus de poids pour le h1 */
   line-height: 1.2;
-  letter-spacing: normal;
   text-transform: none;
-  text-shadow: none;
-  word-wrap: break-word;
 }
 
+/* Utilisation de % ou rem pour stabiliser la taille */
 .reveal h1 {
-  font-size: 3.77em;
+  font-size: 2.5em !important; /* Forcé pour éviter l'écrasement par l'héritage */
+  text-align: center;         /* Souvent mieux pour les titres de section # */
 }
 
 .reveal h2 {
-  font-size: 2.11em;
+  font-size: 1.8em;           /* Clairement plus petit que le h1 */
+  border-bottom: 1px solid #0B615E; /* Optionnel : souligne vos titres de slides ## */
+  padding-bottom: 10px;
 }
 
 .reveal h3 {
-  font-size: 1.55em;
-}
-
-.reveal h4 {
-  font-size: 1em;
+  font-size: 1.3em;
 }
 
 /*********************************************
