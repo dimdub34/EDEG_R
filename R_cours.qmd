@@ -187,6 +187,18 @@ my_data <- read_csv(here("data", "raw_data.csv"))
 💡 Always use RStudio Projects (`.Rproj`) combined with `here`. This ensures that your entire research environment is a self-contained unit that can be shared via GitHub or OSF.
 :::
 
+## Package Versioning with `renv` {#renv}
+
+- `renv` creates a private library for your project, isolated from the rest of your system.
+- **Key Workflow**:
+    - `renv::init()`: Set up the project library.
+    - `renv::snapshot()`: Save the exact versions of all packages used.
+    - `renv::restore()`: Replicate the environment on a colleague's computer.
+
+::: {.lightbulb}
+💡 Including a `renv.lock` file in your data repository (like OSF or Zenodo) is the gold standard for reproducible research.
+:::
+
 ## Scripts
 
 -   console does not store the code once the session is closed
@@ -933,7 +945,7 @@ NA                                      112  5.6   NA
 
 ---
 
-## Create a categorical variable
+## Creating a categorical variable
 
 *from a numeric variable*
 
@@ -1039,6 +1051,34 @@ Other                                  1001 50.0 50.0
 Woman with more than 2 B&S             546  27.3 27.3
 Man with more than 2 B&S               453  22.7 22.7
 ```
+
+## Checking for duplicates
+
+- Data collection (surveys, web scraping) often generates duplicate rows.
+
+- Duplicates bias your descriptive statistics and break the independence assumption of many models.
+
+- `distinct()` keeps only unique rows and removes all subsequent identical copies.
+
+```{r}
+# Remove rows where EVERY column is identical
+df_unique <- hdv2003 |> distinct()
+```
+
+You can also remove duplicates based on a specific subset of columns.
+
+```{r}
+# Keep only one row per individual based on their ID
+# .keep_all = TRUE ensures you keep the other columns in the dataset
+df_cleaned <- hdv2003 |> 
+  distinct(id, .keep_all = TRUE)
+```
+
+```{r}
+df_cleaned <- hdv2003 |> 
+  distinct(sexe, age, .keep_all = TRUE)
+```
+
 
 ## Data formatting
 
@@ -1634,12 +1674,12 @@ table1 <- hdv2003 |>
   tbl_summary(
     by = sport,
     label = list(age ~ "Age (years)", sexe ~ "Gender")
-  ) |> 
-  italicize_levels()
+  )
+table1
 ```
 
 ::: {.supplementary}
-ℹ️ Use theme_gtsummary_journal("jama") or "lancet" to automatically apply the formatting style of major scientific journals.
+ℹ️ Use theme_gtsummary_journal("journal_name") to automatically apply the formatting style of major scientific journals.
 :::
 
 ## Bivariate analysis
@@ -1748,7 +1788,7 @@ the p-value is lower than 5% so we reject $H_0$, the non-parametric MW test must
 **Mann-Whitney test** : wilcox.test with the argument paired=F because the sample are drawn from different populations (athletes and non-athletes are not the same individuals)
 
 ```{r}
-wilcox.test(age ~ sport, data=hdv2003, paired=F)
+wilcox.test(age ~ sport, data=hdv2003)
 ```
 
 **Student test** ($H_0$: the average age is not significantly different between athletes and non-athletes)
@@ -1810,6 +1850,48 @@ With the dataset *rp2018*
   - test if the average number of unemployed people is different between the regions
 2. Analyse the relationship between pop_tot and pop_chom
 
+
+## Effect sizes {#effect_sizes}
+
+- With a large enough $N$, even a trivial difference becomes statistically significant ($p < 0.05$).
+- Effect sizes measure the practical significance or the strength of the relationship, independent of sample size.
+
+*Comparing Two Means (Cohen's $d$)* : When comparing a quantitative variable across two groups (e.g., Age by Sport):
+
+- $d = 0.2$: Small effect.
+- $d = 0.5$: Medium effect.
+- $d = 0.8$: Large effect.
+
+```{r}
+#| echo: true
+# Standardized difference between groups
+cohens_d(age ~ sport, data = hdv2003)
+```
+
+---
+
+*Categorical Variables (Cramér's $V$)* : For $\chi^2$ tests (two qualitative variables), the p-value tells you if they are dependent, but Cramér's $V$ tells you how strongly.  
+Range: 0 (no association) to 1 (perfect association).
+
+```{r}
+#| echo: true
+# Association between qualification and gender
+table_prof <- table(hdv2003$qualif, hdv2003$sexe)
+cramers_v(table_prof)
+```
+
+```{r}
+#| echo: true
+library(ggstatsplot)
+
+# Boxplot + Violin + Statistical Test (ANOVA/t-test)
+ggbetweenstats(
+  data = hdv2003,
+  x = sport,
+  y = age,
+  title = "Distribution of Age by Sport Practice"
+)
+```
 
 # Data Visualization {#visualisations}
 
@@ -2475,6 +2557,19 @@ ggplot(data.frame(k = 1:10, wcss), aes(x = k, y = wcss)) +
 
 The "elbow" point is where the rate of decrease slows down. In this case, it's at k = 3, which confirms that 3 clusters is a good choice for the Iris dataset.
 
+# The Reproducible Kit {#reproducible_kit}
+
+To ensure your research is transparent, portable, and future-proof: 
+
+- RStudio Projects (.Rproj): It keeps all data, scripts, and outputs in one self-contained folder.
+- Quarto (.qmd): The bridge between your code and your manuscript. It integrates citations, cross-references, and dynamic analysis in one document.
+- `here` Package: Eliminates absolute paths. Your code will run on any computer because paths are relative to your project root.
+- `renv Package`: "Freezes" your environment. It records the exact version of every package you use, preventing future updates from breaking your old analysis.
+- Version Control (Git): Your "Time Machine". It tracks every change in your code, allows you to revert errors, and facilitates safe collaboration.
+
+::: {.lightbulb}
+💡 Reproductibility is a gift to your future self. In three years, when you need to re-run your models for a "Minor Revision" from a journal, you will be glad you followed these steps! 
+:::
 
 # Sources {#sources}
 

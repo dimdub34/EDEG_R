@@ -187,6 +187,39 @@ File/New File/R Notebook
 
 <img src="img/notebook1.png" style="height: 500px" />
 
+
+## Quarto: The Next Generation {#quarto}
+
+- Quarto is the multi-language, next-generation version of R Markdown.
+- It allows you to create high-quality articles, reports, presentations (like this one!), and websites.
+- **Key advantage**: It is independent of R, meaning it works seamlessly with Python, Julia, and Observable JS as well.
+- Extension: `.qmd` instead of `.Rmd`.
+
+ℹ️ More information: <https://quarto.org/>
+
+---
+
+**Why use Quarto for Research?**
+
+- **Native Citations**: Easily manage bibliographies (`.bib`) and cross-references (Figures, Tables, Equations).
+- **Consistent Output**: Switch between PDF (LaTeX), HTML, and MS Word without changing your code.
+- **Advanced Layouts**: Create complex multi-column layouts or tabsets for your analysis.
+- **Publication Ready**: Many scientific journals now provide Quarto templates for direct submission.
+
+---
+
+**Anatomy of a Quarto Chunk**
+
+Quarto introduces the "hashpipe" `#|` for options, which is cleaner than the old RMarkdown header.
+
+```{r}
+#| label: fig-plot
+#| fig-cap: "A beautiful ggplot2 figure"
+#| warning: false
+
+library(ggplot2)
+ggplot(cars, aes(speed, dist)) + geom_point()
+
 ## Markdown
 
 -   text in the notebook can be written with the markdown markup language
@@ -243,7 +276,7 @@ typeof(a)
 
 ## The vector
 
--   it's a one-dimensional array where elements are of the same data type
+-   it's a one-dimensional array
 -   can be created with the `c()` function, where `c()` means *concatenate* or *combine*
 
 ```{r}
@@ -439,7 +472,7 @@ With `rbind` and `cbind`
 
 ### Calculating averages on combined vectors
 
-With `rowMeans` and `colMeans`**
+With `rowMeans` and `colMeans`
 
 - `rowMeans` to calculate the mean by row
 - `colMeans` to calculate the mean by column

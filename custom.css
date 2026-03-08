@@ -160,30 +160,9 @@ body {
   font-style: italic;
 }
 
-.reveal pre {
-  display: block;
-  position: relative;
-  width: 90%;
-  margin: 10px auto;
-  text-align: left;
-  font-size: 0.55em;
-  line-height: 1.2em;
-  word-wrap: break-word;
-  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
-}
-
 .reveal code {
   font-family: monospace;
   text-transform: none;
-}
-
-.reveal pre code {
-  display: block;
-  padding: 5px;
-  overflow: auto;
-  max-height: 400px;
-  word-wrap: normal;
-  background-color: #F8F9F9;
 }
 
 .reveal table {
@@ -324,10 +303,65 @@ body {
 }
 
 .reveal div.supplementary {
-  margin-top: 20px;
-  font-size: 0.75em;
-  background-color: whitesmoke;
-  padding: 5px;
-  border: 1px solid grey;
-  border-radius: 10px;
+  margin-top: 1.5rem;
+  font-size: 0.65em;         /* Un peu plus petit pour bien marquer la hiérarchie */
+  line-height: 1.4;          /* Plus d'espace entre les lignes pour la lisibilité */
+  color: #4a4a4a;            /* Un gris foncé plutôt que noir pur */
+  background-color: #f8f9fa; /* Un blanc cassé plus doux que whitesmoke */
+  padding: 15px 20px;
+  border-left: 4px solid #adb5bd; /* Une barre latérale au lieu d'un cadre complet */
+  border-radius: 4px;        /* Arrondi plus discret pour un look pro */
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05); /* Ombre très légère */
+}
+
+.reveal div.lightbulb {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #fff9db; /* Jaune très pâle */
+  border: 1px solid #ffe066;
+  border-radius: 8px;
+  font-size: 0.8em;
+  position: relative;
+  padding-left: 50px;       /* Place pour l'icône */
+}
+
+/* Le conteneur du bloc */
+.reveal pre {
+  display: block;
+  position: relative;
+  width: 100%;               /* Prend toute la largeur disponible pour l'alignement */
+  margin: 20px 0;            /* Plus d'espace vertical entre le texte et le code */
+  text-align: left;
+  font-size: 0.65em;         /* Un peu plus grand que votre 0.55em précédent */
+  line-height: 1.5em;        /* Plus d'espace entre les lignes de code */
+  word-wrap: normal;
+  box-shadow: none;          /* On enlève l'ombre lourde */
+  border: 1px solid #e1e4e8; /* Bordure fine et discrète style GitHub */
+  border-radius: 8px;        /* Coins plus arrondis pour la modernité */
+  background-color: #f6f8fa; /* Gris très clair, plus doux */
+}
+
+/* Le contenu du code lui-même */
+.reveal pre code {
+  display: block;
+  padding: 15px 20px;        /* On respire ! Plus d'espace interne */
+  overflow: auto;
+  max-height: 500px;
+  word-wrap: normal;
+  background: transparent;   /* Utilise le fond du 'pre' */
+  font-family: "Liberation Mono", monospace; /* Cohérent avec vos polices Ubuntu */
+  color: #24292e;            /* Texte gris très foncé (mieux que noir pur) */
+}
+
+/* Style spécifique pour les sorties (Output) de code */
+.reveal .cell-output-display pre, 
+.reveal .cell-output-stdout pre {
+  background-color: #ffffff;  /* Fond blanc pour différencier la sortie du code */
+  border-style: dashed;       /* Bordure pointillée pour marquer que c'est un résultat */
+  margin-top: -15px;          /* Colle un peu plus la sortie au bloc de code précédent */
+}
+
+/* Ajuster la taille de police pour les doctorants (plus lisible) */
+.reveal code {
+  font-size: 0.9em;
 }

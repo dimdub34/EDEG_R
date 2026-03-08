@@ -1,6 +1,12 @@
 library(tidyverse)
+library(janitor)
 library(questionr)
 library(nycflights23)
+
+library(pointblank)
+library(gtsummary)
+library(effectsize)
+library(ggstatsplot)
 
 # Dimensionality reduction
 library(FactoMineR)
