@@ -2546,81 +2546,56 @@ Example: PCA on the Iris dataset.
 
 ```{r}
 data("iris")
+head(iris)
 ```
-
-Can be performed with the `stats` package (already installed) or with `FactoMineR` and `factoextra`
 
 - `FactoMineR` is used to perform the analysis
 - `factoextra` is used to extract information for the analysis and provides visualizations (`fviz_`)
 
 ---
 
-**with `stats`**
-
 ```{r}
+library(FactoMineR)
+library(factoextra)
+
+# Perform PCA
 iris_num <- iris[, -5]  # Remove the species column
-pca_result <- prcomp(iris_num, scale = TRUE, center = TRUE)
-```
-
-- `center = TRUE` -> Mean-Centering the Data \
-  Each variable's mean is subtracted from its values, so the new mean becomes 0. This ensures that PCA captures variation relative to the mean rather than absolute values. If data is not centered, the first principal component might be biased towards large mean values.
-- `scale = TRUE` -> Standardizing the Data \
-  Each variable is divided by its standard deviation, so the new standard deviation becomes 1. This ensures that PCA captures the relative importance of variables based on their variance. If data is not scaled, variables with larger variances might dominate the principal components.
-
----
-
-```{r}
+pca_result <- PCA(iris_num, graph=F)  # scaled (mean 0, variance 1) by default
 summary(pca_result)
 ```
 
-PC1 + PC2 explain 95.8% of the total variance in the data. \
-PC3 adds 4% more variance, but PC4 contributes almost nothing.\
-2 PCs is sufficient.
-
----
-
-The screen plot is a visual representation of the variance explained by each principal component. It helps to decide how many components to keep. \
-The elbow method is often used to identify the number of components that explain most of the variance. \
-The point where the curve starts to flatten is a good indicator of the number of components to keep.
-
-```{r, fig.height=4}
-screeplot(pca_result, type = "lines", main = "Scree Plot")
-```
-
----
-
-```{r}
-pca_data <- data.frame(pca_result$x, Species = iris$Species)
-head(pca_data)
-```
-`pca_result$x` contains the coordinates of the original observations projected onto the principal components (PCs). \
-Each row represents an observation (data point), and each column represents a Principal Component (PC1, PC2, etc.).
-
----
-
-Scatter plot of the first two principal components, colored by species.
-
-```{r, fig.height=4}
-ggplot(pca_data, aes(x = PC1, y = PC2, color = Species)) +
-  geom_point(size = 3) +
-  labs(title = "PCA Projection of Iris Dataset")
-```
-
----
-
-**Same analysis with `FactoMineR` and `factoextra`**
-
-```{r}
-pca_result_2 <- PCA(iris_num, graph=F)
-summary(pca_result_2)
-```
+Dim. 1 + Dim. 2 explain 95.8% of the total variance in the data.
+Dim. 3 adds 4% more variance, but Dim. 4 contributes almost nothing.
+2 Dim. is sufficient.
 
 ---
 
 **screeplot**
 
-```{r, fig.height=4}
-fviz_screeplot(pca_result_2)
+- The screen plot is a visual representation of the variance explained by each principal component. It helps to decide how many components to keep.  
+- The elbow method is often used to identify the number of components that explain most of the variance.  
+- The point where the curve starts to flatten is a good indicator of the number of components to keep.
+
+```{r}
+fviz_screeplot(pca_result)
+```
+
+---
+
+```{r}
+pca_data <- data.frame(pca_result$ind$coord, species=iris$Species)
+head(pca_data)
+```
+
+`pca_result$ind$coord` contains the coordinates of the original observations projected onto the principal components (Dimensions).
+Each row represents an observation (data point), and each column represents a Principal Component (Dim. 1, Dim .2, etc.).
+
+---
+
+```{r}
+ggplot(pca_data, aes(x = Dim.1, y = Dim.2, color = species)) +
+  geom_point(size = 3) +
+  labs(title = "PCA Projection of Iris Dataset")
 ```
 
 ---
@@ -2628,9 +2603,15 @@ fviz_screeplot(pca_result_2)
 **Biplot**: displays both the observations and the variables on the same plot. \
 The observations are represented by points, and the variables are represented by arrows. \
 
-```{r, fig.height=4}
-fviz_pca_biplot(pca_result_2, label="var", habillage=as.factor(iris$Species), addEllipses = T, repel = TRUE)
+```{r}
+fviz_pca_biplot(pca_result, label="var", habillage=as.factor(iris$Species), addEllipses = T, repel = TRUE)
 ```
+
+---
+
+::: {.lightbulb}
+💡 If you have categorical data instead of numeric, use MCA (Multiple Correspondence Analysis) via MCA(data) in the same package.
+:::
 
 ## K-Means Clustering
 
@@ -2651,9 +2632,12 @@ As for dimensionality reduction, standardizing the data is important for k-means
 kmeans_result <- kmeans(iris_num, centers = 3, nstart = 25)
 kmeans_result
 ```
+
+::: {.lightbulb}
 💡 *Notes:* \
 Here we set 3 clusters because we know that the Iris dataset has 3 species. \
 But in practice, the number of clusters is often unknown and must be determined using methods like the elbow method, silhouette method, or gap statistic.
+:::
 
 ---
 
@@ -2670,13 +2654,14 @@ Comparison between the clusters and the actual species shows that the clustering
 
 **Visualizing the Clusters**
 
-We can visualize the clusters by plotting the first two principal components and coloring the points by cluster.\
+We can visualize the clusters by plotting the first two principal components and coloring the points by cluster.
+
 We indeed saw that with PCA, the first two components explain most of the variance in the data.
 
 [*Remember: `pca_data <- data.frame(pca_result$x, Species = iris$Species)`, where `pca_result$x` contains the coordinates of the original observations projected onto the principal components (PCs).*]{style=font-size:0.75em}
 
 ```{r, fig.height=3.25}
-ggplot(pca_data, aes(x = PC1, y = PC2, color = as.factor(kmeans_result$cluster))) +
+ggplot(pca_data, aes(x = Dim.1, y = Dim.2, color = as.factor(kmeans_result$cluster))) +
   geom_point(size = 3) +
   labs(title = "K-Means Clustering on PCA Projection", color = "Cluster")
 ```
