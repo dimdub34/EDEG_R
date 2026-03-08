@@ -1,4 +1,8 @@
-# Content
+# Introduction to R
+
+*by Dimitri Dubois*
+
+## Content
 
 - Introduction and installation
 - Rstudio
