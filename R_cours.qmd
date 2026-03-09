@@ -960,6 +960,8 @@ Enseignement superieur                  441 22.0 23.4
 NA                                      112  5.6   NA
 ```
 
+---
+
 3. reorder the factors of this variable to get
 
 ```         
