@@ -43,7 +43,7 @@ source(here("script_source.R"))
 - [Dimensionality Reduction and Cluster Analysis](#dim_reduction_cluster)
 - [Sources](#sources)
 
-Slides: <https://www.duboishome.info/dimitri/cours/edeg/R>
+Slides: <https://www.duboishome.info/dimitri/cours/R>
 
 
 <!-- *** Presentation and installation of R *** -->
