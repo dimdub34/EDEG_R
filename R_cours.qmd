@@ -1919,18 +1919,57 @@ table_prof <- table(hdv2003$qualif, hdv2003$sexe)
 cramers_v(table_prof)
 ```
 
-```{r}
-#| echo: true
-library(ggstatsplot)
 
-# Boxplot + Violin + Statistical Test (ANOVA/t-test)
-ggbetweenstats(
-  data = hdv2003,
-  x = sport,
-  y = age,
-  title = "Distribution of Age by Sport Practice"
-)
+## Statistical Power Analysis {#power_analysis}
+
+→ To determine the minimum sample size ($N$) needed to detect an effect of a given size with a certain level of confidence.
+
+Key parameters:
+
+- Effect Size: The magnitude of the phenomenon in the population.
+- Alpha ($\alpha$): Usually 0.05 (significance level).
+- Power ($1-\beta$): Usually 0.80 or higher in social sciences.
+
+---
+
+Implementation with `pwr`
+
+The pwr package provides functions for different types of tests (t-test, ANOVA, Chi-square, etc.).
+```{r}
+library(pwr)
+
+# Example: How many participants for a t-test?
+# To detect a medium effect (d = 0.5) with 80% power
+pwr.t.test(d = 0.5, power = 0.80, sig.level = 0.05, type = "two.sample")
 ```
+
+## Sensitivity Power Analysis {#sensitivity_power}
+
+You already have your data (e.g., $N = 200$) and you want to know what effect size you can realistically "capture".  
+
+→ "What is the smallest effect I can detect with 80% power?"
+
+```{r}
+# Find the effect size (d) for a t-test with N = 100 per group
+pwr.t.test(n = 100, sig.level = 0.05, power = 0.80, type = "two.sample")
+```
+
+::: {.lightbulb}
+💡 If the detectable effect size ($d$) is 0.40 but the literature suggests the real effect is 0.15, your study is underpowered. You should warn your reader that a non-significant result might be a False Negative (Type II Error).
+:::
+
+---
+
+**Which Power Test to Use?**
+
+Depending on your research design, choose the appropriate `pwr` function:
+
+- **Comparing 2 Means**: `pwr.t.test(type = ...)`
+    - `two.sample`: Independent groups.
+    - `paired`: Same individuals (Pre/Post).
+- **Comparing >2 Means**: `pwr.anova.test(k = 3, ...)`
+- **Testing a Correlation**: `pwr.r.test(r = 0.3, ...)`
+- **Chi-Square (Associations)**: `pwr.chisq.test(w = 0.3, df = 1, ...)`
 
 
 <!-- *** Data Visualization *** -->
