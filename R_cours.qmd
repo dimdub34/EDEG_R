@@ -1077,6 +1077,8 @@ Autre        1971 98.6 98.6
 Cinéma et BD   29  1.5  1.5
 ```
 
+---
+
 3.  with *case_when* create the variable *gender_bs* with the following categories : Man with more than 2 brothers and sisters, Woman with more than 2 brothers and sisters, Other. The expected result is
 
 ```         
