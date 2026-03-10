@@ -1399,6 +1399,8 @@ flights |>
   head(5)
 ```
 
+--- 
+
 ⚠️ the actions are chained (pipeline), but nothing is stored. To keep a track of these actions you have to start with an assignment to an object.
 
 ```{r}
